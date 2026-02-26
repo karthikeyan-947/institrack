@@ -323,6 +323,7 @@ def bus_signal():
         notified_users = []
         failed_users = []
         all_registered_users = []
+        debug_comparisons = []
 
         for key in all_keys:
             if key.startswith('user_') and key.endswith('_bus'):
@@ -344,7 +345,26 @@ def bus_signal():
                 norm_user_stop = str(user_stop_name).strip().lower() if user_stop_name else ""
                 norm_location = str(location).strip().lower()
 
-                if norm_user_bus == norm_bus_num and norm_user_stop == norm_location:
+                bus_match = norm_user_bus == norm_bus_num
+                stop_match = norm_user_stop == norm_location
+
+                # Detailed debug info for each comparison
+                debug_comparisons.append({
+                    "phone": phone_raw,
+                    "db_key": key,
+                    "raw_bus": user_bus_num,
+                    "raw_stop": user_stop_name,
+                    "norm_user_bus": norm_user_bus,
+                    "norm_signal_bus": norm_bus_num,
+                    "bus_match": bus_match,
+                    "norm_user_stop": norm_user_stop,
+                    "norm_signal_stop": norm_location,
+                    "stop_match": stop_match,
+                    "is_registered": is_registered,
+                    "twilio_configured": twilio_client is not None
+                })
+
+                if bus_match and stop_match:
                     if twilio_client:
                         try:
                             twilio_phone = '+' + phone_id
@@ -375,7 +395,10 @@ def bus_signal():
             "failed_users": failed_users if failed_users else None,
             "debug": {
                 "searching_for": {"bus": bus_num, "stop": location},
-                "all_registered_users": all_registered_users
+                "all_registered_users": all_registered_users,
+                "comparisons": debug_comparisons,
+                "total_db_keys": len(all_keys),
+                "bus_keys_found": len([k for k in all_keys if k.startswith('user_') and k.endswith('_bus')])
             }
         }, 200
 
