@@ -315,6 +315,7 @@ def bus_signal():
         data = request.get_json()
         bus_num = str(data.get('bus_number'))
         location = data.get('location')
+        signal_type = data.get('type', 'normal')
 
         if not bus_num or not location:
             return {"status": "error", "message": "bus_number and location required"}, 400
@@ -368,9 +369,20 @@ def bus_signal():
                     if twilio_client:
                         try:
                             twilio_phone = '+' + phone_id
+                            
+                            # Determine message based on payload type
+                            if signal_type == "traffic":
+                                body_text = f"⚠️ TRAFFIC DELAY: Bus {bus_num} is currently stationary in traffic near {location}. Please expect delays."
+                            elif signal_type == "missed_checkin":
+                                body_text = f"🚨 BUS ALERT: Bus {bus_num} is approaching {location} but missed its check-in window. Please be ready at your stop!"
+                            elif signal_type == "sos":
+                                body_text = f"🆘 EMERGENCY SOS: Bus {bus_num} has reported a critical emergency near {location}. Administration has been notified immediately!"
+                            else:
+                                body_text = f"🚌 Bus Alert!\n\nBus {bus_num} has reached {location}!\n\n✅ Your stop is coming up."
+
                             message = twilio_client.messages.create(
                                 from_=TWILIO_WHATSAPP_NUMBER,
-                                body=f"🚌 Bus Alert!\n\nBus {bus_num} has reached {location}!\n\n✅ Your stop is coming up.",
+                                body=body_text,
                                 to=f"whatsapp:{twilio_phone}"
                             )
                             notified_users.append(phone_raw)
