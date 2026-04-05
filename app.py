@@ -372,13 +372,41 @@ def bus_signal():
                             
                             # Determine message based on payload type
                             if signal_type == "traffic":
-                                body_text = f"⚠️ TRAFFIC DELAY: Bus {bus_num} is currently stationary in traffic near {location}. Please expect delays."
+                                body_text = (
+                                    f"🟡 *InstiTrack — Traffic Alert*\n"
+                                    f"━━━━━━━━━━━━━━━━━━━━\n"
+                                    f"🚌 Bus *{bus_num}* is currently delayed due to traffic near *{location}*.\n\n"
+                                    f"⏳ Please wait at your stop. We'll notify you when the bus resumes.\n"
+                                    f"━━━━━━━━━━━━━━━━━━━━\n"
+                                    f"📍 _Powered by InstiTrack • Kinnova Tech_"
+                                )
                             elif signal_type == "missed_checkin":
-                                body_text = f"🚨 BUS ALERT: Bus {bus_num} is approaching {location} but missed its check-in window. Please be ready at your stop!"
+                                body_text = (
+                                    f"🟠 *InstiTrack — Missed Check-in*\n"
+                                    f"━━━━━━━━━━━━━━━━━━━━\n"
+                                    f"🚌 Bus *{bus_num}* is on its way but missed its scheduled check-in at *{location}*.\n\n"
+                                    f"🔔 The driver has been alerted. Please stay ready at your stop!\n"
+                                    f"━━━━━━━━━━━━━━━━━━━━\n"
+                                    f"📍 _Powered by InstiTrack • Kinnova Tech_"
+                                )
                             elif signal_type == "sos":
-                                body_text = f"🆘 EMERGENCY SOS: Bus {bus_num} has reported a critical emergency near {location}. Administration has been notified immediately!"
+                                body_text = (
+                                    f"🔴 *InstiTrack — EMERGENCY ALERT*\n"
+                                    f"━━━━━━━━━━━━━━━━━━━━\n"
+                                    f"🆘 Bus *{bus_num}* has triggered an *SOS Emergency* near *{location}*.\n\n"
+                                    f"🏫 College administration has been notified and assistance is being dispatched.\n"
+                                    f"━━━━━━━━━━━━━━━━━━━━\n"
+                                    f"📍 _Powered by InstiTrack • Kinnova Tech_"
+                                )
                             else:
-                                body_text = f"🚌 Bus Alert!\n\nBus {bus_num} has reached {location}!\n\n✅ Your stop is coming up."
+                                body_text = (
+                                    f"🟢 *InstiTrack — Bus Update*\n"
+                                    f"━━━━━━━━━━━━━━━━━━━━\n"
+                                    f"🚌 Bus *{bus_num}* has arrived at *{location}*!\n\n"
+                                    f"✅ Your stop is coming up. Please be ready to board.\n"
+                                    f"━━━━━━━━━━━━━━━━━━━━\n"
+                                    f"📍 _Powered by InstiTrack • Kinnova Tech_"
+                                )
 
                             print(f"[TWILIO DEBUG] Sending to: whatsapp:{twilio_phone}")
                             print(f"[TWILIO DEBUG] From: {TWILIO_WHATSAPP_NUMBER}")
